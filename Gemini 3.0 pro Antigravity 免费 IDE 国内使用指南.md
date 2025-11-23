@@ -20,7 +20,14 @@
 * 操作步骤：
 * 打开您的网络代理软件。
 * 将代理模式设置为 全局模式 (Global Mode)。
-* 下载Proxifier 并安装 https://www.proxifier.com/download/ 
+* 下载Proxifier 并安装 https://www.proxifier.com/download/
+* 
+  <img width="2036" height="1396" alt="image" src="https://github.com/user-attachments/assets/d825a7d3-a2d0-4561-9809-3f20f4338616" />
+  设置代理
+  <img width="1070" height="1070" alt="image" src="https://github.com/user-attachments/assets/ab062494-f15e-4fe5-b9a9-94a7754f3929" />
+  设置规则
+  <img width="1800" height="1290" alt="image" src="https://github.com/user-attachments/assets/bfec29a9-d9bc-472d-8878-fd164a19ccf8" />
+
 * 设置代码转发地址
 重启 Antigravity 并尝试登录。
 
