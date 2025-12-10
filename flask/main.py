@@ -31,5 +31,21 @@ def get_cookie():
 
     return f"username: {username}"
 
+@app.route("/del_cookie")
+def delete_cookie():
+    response = make_response("<p>删除cookie</p>")
+
+    # 删除一个cookie
+    response.delete_cookie("username");
+
+    cookies_dict = request.cookies.to_dict()
+    print(cookies_dict);
+
+    for k,v in cookies_dict.items():
+        print(k,v)
+        response.delete_cookie(k);
+
+    return response;
+
 if __name__ == '__main__':
     app.run(debug=True)
