@@ -30,3 +30,17 @@ pip freeze > requirements.txt
 全局拦截器
 
 模块拦截器![alt text](image.png)
+
+
+# AI 数据化引擎价格方案解析
+
+LLM + TEXT2sql + DSL
+大模型 + text2sql + dsl + 项目渲染器/ JSON schema 设计.
+
+- shadowcn - taliwandcs , pian
+- langchianjs 、ollama、qwen2.06b.
+- 服务端ai 能力集成.
+
+### 项目搭建nuxt 框架.
+
+
