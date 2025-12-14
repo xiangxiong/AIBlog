@@ -4,6 +4,9 @@ https://osgeo.cn/flask/
 python 教程:
 https://docs.python.org/zh-cn/3/tutorial/index.html
 
+python 语法教程:
+https://www.w3school.com.cn/python/python_inheritance.asp
+
 创建虚拟环境:
 ```
 python -m venv venv
