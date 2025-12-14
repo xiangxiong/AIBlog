@@ -29,6 +29,8 @@ class User:
         sql =  "select * from %s" % (self.table_name);
         return MyOrm().execute(sql);
 
+        
+
 if __name__ == "__main__":
     orm = MyOrm();
     # result = orm.queryUserAll();
