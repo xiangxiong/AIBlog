@@ -74,14 +74,10 @@ def del_session():
 if __name__ == '__main__':
     app.run(debug=True)
 
-
 # from flask import Flask;
 # from controller.user import user;
-
 # app.register_blueprint(user);
-
 # app = Flask(__name__)
-
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
