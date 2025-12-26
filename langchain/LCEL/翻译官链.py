@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_deepseek import ChatDeepSeek
+from langchain_community.chat_models import ChatDeepSeek
 
 # 加载环境变量
 load_dotenv()
