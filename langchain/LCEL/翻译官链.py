@@ -21,10 +21,7 @@ chain = prompt | model | parser
 # 5. 调用
 print(chain.invoke({"text": "我正在通过实战快速学习 LangChain"}))
 
-
 '''
 1、| 符号的作用是把前一步的输出自动传给下一步的输入。
 2、 StrOutputParser() 非常重要，它让你拿到的直接是结果文本，而不是一大串包含 Token 信息的 JSON#
-
-
- '''
+'''
