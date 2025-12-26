@@ -28,10 +28,10 @@
 - **虚拟环境**：学会了创建和激活Python虚拟环境
 - **依赖管理**：使用`pip freeze > requirements.txt`生成项目依赖清单
 - **核心依赖库**：
-  - Flask 3.0.2：Web框架
-  - SQLAlchemy 2.0.44：ORM框架
-  - psycopg2-binary 2.9.11：PostgreSQL数据库驱动
-  - 各种Flask扩展：Flask-Login、Flask-Migrate等
+  - Flask 3.0.2：Web框架.
+  - SQLAlchemy 2.0.44：ORM框架.
+  - psycopg2-binary 2.9.11：PostgreSQL数据库驱动.
+  - 各种Flask扩展：Flask-Login、Flask-Migrate等.
 
 ## 5. 学习资源
 - Flask官方教程：https://osgeo.cn/flask/
