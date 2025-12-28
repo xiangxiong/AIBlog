@@ -1,0 +1,11 @@
+[
+  {
+    "product_id": "SKU_001",
+    "title": "智能降噪耳机",
+    "price": "599",
+    "shipping_info": { "location": "上海", "lead_time": "24小时内" },
+    "description": "高保真音质，超长续航。图片链接：[img_url]",
+    "after_sales": "支持7天无理由退货，1年质保。",
+    "url": "https://shop.com/item/001"
+  }
+]
