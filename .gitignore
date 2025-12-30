@@ -20,6 +20,8 @@ ENV/
 *.swo
 *~
 
+AI 场景化.md
+本周学习总结.md
 # Logs
 logs/
 *.log
