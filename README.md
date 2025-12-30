@@ -3,5 +3,4 @@
 
 <a href="https://github.com/xiangxiong/core-llmops/blob/main/RAG%20%E6%A0%B8%E5%BF%83%E8%AE%A4%E7%9F%A5%E4%B8%8E%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B.md">RAG 核心认知与技术选型</a>
 
-
 <a href="https://github.com/xiangxiong/core-llmops/blob/main/Python%E4%B8%80%E5%91%A8%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93.md">Python 一周学习总结</a>
