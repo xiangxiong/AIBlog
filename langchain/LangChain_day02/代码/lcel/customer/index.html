@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电商客服系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #1890ff;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            height: 400px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .user-message {
+            justify-content: flex-end;
+        }
+        
+        .bot-message {
+            justify-content: flex-start;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+        }
+        
+        .user-message .message-content {
+            background-color: #1890ff;
+            color: white;
+            border-top-right-radius: 4px;
+        }
+        
+        .bot-message .message-content {
+            background-color: #f0f0f0;
+            color: #333;
+            border-top-left-radius: 4px;
+        }
+        
+        .input-area {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        #user-input:focus {
+            border-color: #1890ff;
+        }
+        
+        #send-btn {
+            padding: 12px 20px;
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        #send-btn:hover {
+            background-color: #0c7cd5;
+        }
+        
+        .analysis-panel {
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .analysis-item {
+            margin-bottom: 12px;
+        }
+        
+        .analysis-label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .analysis-value {
+            color: #333;
+        }
+        
+        .urgency-high {
+            color: #f5222d;
+            font-weight: bold;
+        }
+        
+        .urgency-medium {
+            color: #fa8c16;
+            font-weight: bold;
+        }
+        
+        .urgency-low {
+            color: #52c41a;
+            font-weight: bold;
+        }
+        
+        .sentiment-positive {
+            color: #52c41a;
+        }
+        
+        .sentiment-negative {
+            color: #f5222d;
+        }
+        
+        .sentiment-neutral {
+            color: #fa8c16;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 10px;
+            color: #999;
+        }
+        
+        .sample-queries {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .sample-query {
+            padding: 8px 12px;
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .sample-query:hover {
+            background-color: #bae7ff;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .analysis-panel {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>电商客服系统</h1>
+            <p class="description">智能处理客户反馈，提供精准回复</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot-message">
+                        <div class="message-content">
+                            您好！我是电商客服助手，请问有什么可以帮助您的吗？
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <input type="text" id="user-input" placeholder="请输入您的问题或反馈..." autocomplete="off">
+                    <button id="send-btn">发送</button>
+                </div>
+            </div>
+            
+            <div class="analysis-panel">
+                <div class="panel-title">分析结果</div>
+                <div id="analysis-results">
+                    <div class="loading">等待用户输入...</div>
+                </div>
+                
+                <div class="sample-queries">
+                    <div class="panel-title" style="margin-top: 20px;">示例问题</div>
+                    <div class="sample-query" data-query="订单ORD2024071501的物流太慢了，承诺三天实际七天才到！紧急处理！">物流问题</div>
+                    <div class="sample-query" data-query="产品质量很好，但客服态度差劲，要求退货">服务态度问题</div>
+                    <div class="sample-query" data-query="支付系统扣款异常，多扣了200元，立刻解决！否则我将投诉至消费者协会">支付问题</div>
+                    <div class="sample-query" data-query="非常喜欢新买的耳机，音质优秀，配送也快">好评反馈</div>
+                    <div class="sample-query" data-query="订单ORD2024071502的商品与描述严重不符，虚假宣传！要求赔偿！">商品不符问题</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const analysisResults = document.getElementById('analysis-results');
+            const sampleQueries = document.querySelectorAll('.sample-query');
+            
+            const API_BASE = 'http://localhost:8000'; // 后端API地址
+            
+            // 添加消息到聊天窗口
+            function addMessage(content, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = content;
+                
+                messageDiv.appendChild(contentDiv);
+                chatMessages.appendChild(messageDiv);
+                
+                // 滚动到底部
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 更新分析结果面板
+            function updateAnalysisPanel(data) {
+                if (!data || !data.result) {
+                    analysisResults.innerHTML = '<div class="loading">分析结果不可用</div>';
+                    return;
+                }
+                
+                const result = data.result;
+                let html = `
+                    <div class="analysis-item">
+                        <div class="analysis-label">订单ID</div>
+                        <div class="analysis-value">${result.order_id || 'N/A'}</div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">情感分析</div>
+                        <div class="analysis-value sentiment-${result.sentiment ? result.sentiment.toLowerCase() : 'neutral'}">
+                            ${result.sentiment || 'NEUTRAL'} (置信度: ${result.confidence ? result.confidence.toFixed(2) : 'N/A'})
+                        </div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">问题分类</div>
+                        <div class="analysis-value">${result.categories ? result.categories.join(', ') : 'N/A'}</div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">紧急程度</div>
+                        <div class="analysis-value urgency-${result.urgency ? result.urgency.toLowerCase() : 'medium'}">
+                            ${result.urgency || 'MEDIUM'} (${result.sla_hours || 24}小时内响应)
+                        </div>
+                    </div>
+                    <div class="analysis-item">
+                        <div class="analysis-label">分配团队</div>
+                        <div class="analysis-value">${data.assigned_team || 'General'}</div>
+                    </div>
+                `;
+                
+                if (result.key_phrases && result.key_phrases.length > 0) {
+                    html += `
+                        <div class="analysis-item">
+                            <div class="analysis-label">关键要点</div>
+                            <div class="analysis-value">${result.key_phrases.join(', ')}</div>
+                        </div>
+                    `;
+                }
+                
+                analysisResults.innerHTML = html;
+            }
+            
+            // 显示加载状态
+            function showLoading() {
+                analysisResults.innerHTML = '<div class="loading">分析中...</div>';
+            }
+            
+            // 发送消息到后端API
+            async function sendMessage(message) {
+                showLoading();
+                
+                try {
+                    const response = await fetch(`${API_BASE}/process-feedback`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            content: message,
+                            user_id: 'web_user'
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        addMessage(data.result.final_response, false);
+                        updateAnalysisPanel(data.result);
+                    } else {
+                        throw new Error('API returned unsuccessful response');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('抱歉，系统暂时无法处理您的请求，请稍后再试。', false);
+                    analysisResults.innerHTML = '<div class="loading">分析失败，请重试</div>';
+                }
+            }
+            
+            // 发送按钮点击事件
+            sendBtn.addEventListener('click', function() {
+                const message = userInput.value.trim();
+                if (message) {
+                    addMessage(message, true);
+                    userInput.value = '';
+                    sendMessage(message);
+                }
+            });
+            
+            // 回车键发送消息
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendBtn.click();
+                }
+            });
+            
+            // 示例问题点击事件
+            sampleQueries.forEach(query => {
+                query.addEventListener('click', function() {
+                    const sampleText = this.getAttribute('data-query');
+                    userInput.value = sampleText;
+                    sendBtn.click();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

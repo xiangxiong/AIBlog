@@ -10,7 +10,6 @@ https://www.w3school.com.cn/python/python_inheritance.asp
 sqlalchemy 教程:
 https://osgeo.cn/sqlalchemy/tutorial/engine.html
 
-
 创建虚拟环境:
 ```
 python -m venv venv
@@ -25,6 +24,7 @@ source venv/bin/activate
 ```
 pip freeze > requirements.txt
 ```
+pip install -r requirements.txt
 
 # 拦截器的基本概念
 拦截器（Interceptor）是Spring AOP（Aspect Oriented Programming）中的一个概念，它允许在方法调用前后执行额外的逻辑。
