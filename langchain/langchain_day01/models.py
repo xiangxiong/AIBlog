@@ -33,9 +33,20 @@ BAICHUAN_EMBEDDING_URL = "https://api.baichuan-ai.com/v1/embeddings"
 import os
 from langchain_openai import ChatOpenAI
 from openai import OpenAI
+from dotenv import load_dotenv
 import inspect
 from langchain_community.embeddings import BaichuanTextEmbeddings, DashScopeEmbeddings, HunyuanEmbeddings
-def get_lc_model_client(api_key=os.getenv(ALI_TONGYI_API_KEY_OS_VAR_NAME), base_url=ALI_TONGYI_URL
+
+load_dotenv()
+
+def _get_env_value(env_var_name):
+    value = os.getenv(env_var_name)
+    if value:
+        return value
+    raise ValueError(f"缺少环境变量：{env_var_name}")
+
+
+def get_lc_model_client(api_key=None, base_url=ALI_TONGYI_URL
                         , model=ALI_TONGYI_MAX_MODEL, temperature=0.7, verbose=False, debug=False):
     """
         通过LangChain获得指定平台和模型的客户端，设定的默认平台和模型为阿里百炼qwen-max-latest
@@ -45,6 +56,7 @@ def get_lc_model_client(api_key=os.getenv(ALI_TONGYI_API_KEY_OS_VAR_NAME), base_
     function_name = inspect.currentframe().f_code.co_name
     if (verbose):
         print(f"{function_name}-平台：{base_url},模型：{model},温度：{temperature}")
+    api_key = api_key or _get_env_value(ALI_TONGYI_API_KEY_OS_VAR_NAME)
     if (debug):
         print(f"{function_name}-平台：{base_url},模型：{model},温度：{temperature},key：{api_key}")
     return ChatOpenAI(api_key=api_key, base_url=base_url, model=model, temperature=temperature,
@@ -72,14 +84,14 @@ def get_ds_model_client(model=DEEPSEEK_CHAT_MODEL, temperature=0.7, verbose=Fals
 def get_baichuan_embeddings():
     """通过LangChain获得一个百川嵌入模型的实例，百川嵌入模型服务限流严重，大概有10~20%的概率访问报错"""
     return BaichuanTextEmbeddings(
-        api_key=os.getenv(BAICHUAN_API_KEY_OS_VAR_NAME)
+        api_key=_get_env_value(BAICHUAN_API_KEY_OS_VAR_NAME)
     )
 
 
 def get_ali_embeddings():
     """通过LangChain获得一个阿里通义千问嵌入模型的实例"""
     return DashScopeEmbeddings(
-        model=ALI_TONGYI_EMBEDDING_MODEL, dashscope_api_key=os.getenv(ALI_TONGYI_API_KEY_OS_VAR_NAME)
+        model=ALI_TONGYI_EMBEDDING_MODEL, dashscope_api_key=_get_env_value(ALI_TONGYI_API_KEY_OS_VAR_NAME)
     )
 
 
@@ -93,7 +105,7 @@ def get_tencent_embeddings():
     )
 
 
-def get_normal_client(api_key=os.getenv(ALI_TONGYI_API_KEY_OS_VAR_NAME), base_url=ALI_TONGYI_URL,
+def get_normal_client(api_key=None, base_url=ALI_TONGYI_URL,
                       verbose=False, debug=False):
     """
     使用原生api获得指定平台的客户端，但未指定具体模型，缺省平台为阿里云百炼
@@ -103,6 +115,7 @@ def get_normal_client(api_key=os.getenv(ALI_TONGYI_API_KEY_OS_VAR_NAME), base_ur
     function_name = inspect.currentframe().f_code.co_name
     if (verbose):
         print(f"{function_name}-平台：{base_url}")
+    api_key = api_key or _get_env_value(ALI_TONGYI_API_KEY_OS_VAR_NAME)
     if (debug):
         print(f"{function_name}-平台：{base_url},key：{api_key}")
     return OpenAI(api_key=api_key, base_url=base_url)

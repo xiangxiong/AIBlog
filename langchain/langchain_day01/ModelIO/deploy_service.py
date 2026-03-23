@@ -1,21 +1,31 @@
 #学会利用LangChain部署我们的应用成为WEB服务
 
-
 from fastapi import FastAPI
+from dotenv import load_dotenv
 from langchain_community.chat_models import ChatTongyi
 from langchain_core.globals import set_debug
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langserve import add_routes
+from langchain_openai import ChatOpenAI
+import os
+from dotenv import load_dotenv
 
-from models import get_lc_model_client
+load_dotenv()
+
 # 开启调试
 set_debug(True)
 
 #获得访问大模型客户端
-# client = ChatTongyi()
-client = get_lc_model_client()
+# 对阿里百炼服务，原生 Tongyi 客户端比 OpenAI 兼容层更稳，能避免 invoke 时的 500 错误
+# client = ChatTongyi(model="qwen-max")
+
+client = ChatOpenAI(
+    api_key=os.getenv("Deepseek_Key"),
+    model="deepseek-chat",
+    base_url="https://api.deepseek.com/v1",
+)
 
 #解析返回结果
 parser = StrOutputParser()
