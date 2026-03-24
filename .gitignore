@@ -29,3 +29,8 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# 排除文件
+langchain/LangChain_day03/
+langchain/LangChain_day02/
+langchain/langchain_day01/
