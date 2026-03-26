@@ -1,0 +1,37 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.env/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+AI 场景化.md
+本周学习总结.md
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# 排除文件
+langchain/LangChain_day03/
+langchain/LangChain_day02/
+langchain/langchain_day01/
+company/
