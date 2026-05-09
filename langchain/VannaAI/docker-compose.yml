@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: vanna-demo-postgres
+    environment:
+      POSTGRES_USER: vanna
+      POSTGRES_PASSWORD: vanna123
+      POSTGRES_DB: vanna_demo
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./backend/db/init:/docker-entrypoint-initdb.d
+      - vanna_pg_data:/var/lib/postgresql/data
+
+volumes:
+  vanna_pg_data:
