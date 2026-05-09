@@ -1,12 +1,9 @@
 from __future__ import annotations
-
 import json
 import re
-
 from vanna import User
 from vanna.core.llm import LlmMessage, LlmRequest
 from vanna.integrations.openai import OpenAILlmService
-
 from app.models import QueryResult
 
 
