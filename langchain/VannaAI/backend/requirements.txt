@@ -4,4 +4,4 @@ psycopg[binary]
 pydantic-settings
 python-dotenv
 pandas
-vanna
+vanna[openai]

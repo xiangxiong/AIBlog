@@ -32,7 +32,7 @@ export default function App() {
       setError(err instanceof Error ? err.message : "加载侧边栏数据失败");
     }
   }
-
+  
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!question.trim() || loading) {
@@ -56,9 +56,8 @@ export default function App() {
   return (
     <main className="shell">
       <aside className="sidebar">
-        <h1>Vanna 分析台</h1>
+        <h1>Custom Report Builder 分析台</h1>
         <p className="muted">React + FastAPI + PostgreSQL 的自然语言数据分析示例。</p>
-
         <section>
           <h2>历史会话</h2>
           <div className="history-list">

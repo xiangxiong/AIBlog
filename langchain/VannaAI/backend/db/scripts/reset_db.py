@@ -6,10 +6,8 @@ from pathlib import Path
 import psycopg
 from dotenv import load_dotenv
 
-
 ROOT_DIR = Path(__file__).resolve().parents[2]
 INIT_DIR = ROOT_DIR / "db" / "init"
-
 
 def load_database_url() -> str:
     load_dotenv(ROOT_DIR / ".env")
