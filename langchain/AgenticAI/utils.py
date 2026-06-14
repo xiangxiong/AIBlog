@@ -12,45 +12,45 @@ import matplotlib.pyplot as plt
 from PIL import Image  # (kept if you need it elsewhere)
 from dotenv import load_dotenv
 from openai import OpenAI
-from anthropic import Anthropic
 from html import escape
 
 # === Env & Clients ===
-load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
-anthropic_api_key = os.getenv("ANTHROPIC_API_KEY")
+ENV_PATH = Path(__file__).resolve().parent / ".env"
+load_dotenv(ENV_PATH)
 
-# Both clients read keys from env by default; explicit is also fine:
-openai_client = OpenAI(api_key=openai_api_key) if openai_api_key else OpenAI()
-anthropic_client = Anthropic(api_key=anthropic_api_key) if anthropic_api_key else Anthropic()
-anthropic_client = Anthropic(
-    base_url="http://jupyter-api-proxy.internal.dlai/rev-proxy/anthropic"
-)
+ZHIPU_API_KEY = os.getenv("ZHIPU_API_KEY") or os.getenv("ZHIPUAI_API_KEY")
+ZHIPU_BASE_URL = os.getenv("ZHIPU_BASE_URL", "https://open.bigmodel.cn/api/paas/v4")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+if ZHIPU_API_KEY:
+    llm_client = OpenAI(api_key=ZHIPU_API_KEY, base_url=ZHIPU_BASE_URL)
+elif OPENAI_API_KEY:
+    llm_client = OpenAI(api_key=OPENAI_API_KEY)
+else:
+    raise RuntimeError(
+        "请在 langchain/AgenticAI/.env 中设置 ZHIPU_API_KEY 或 OPENAI_API_KEY"
+    )
+
+_use_chat_completions = bool(ZHIPU_API_KEY)
 
 
 def get_response(model: str, prompt: str) -> str:
-    if "claude" in model.lower() or "anthropic" in model.lower():
-        # Anthropic Claude format
-        message = anthropic_client.messages.create(
+    """调用 LLM 生成文本（智谱走 chat.completions，OpenAI 走 responses）。"""
+    if _use_chat_completions:
+        response = llm_client.chat.completions.create(
             model=model,
-            max_tokens=1000,
-            messages=[{"role": "user", "content": [{"type": "text", "text": prompt}]}],
+            messages=[{"role": "user", "content": prompt}],
         )
-        return message.content[0].text
+        return response.choices[0].message.content or ""
 
-    else:
-        # Default to OpenAI format for all other models (gpt-4, o3-mini, o1, etc.)
-        response = openai_client.responses.create(
-            model=model,
-            input=prompt,
-        )
-        return response.output_text
-    
+    response = llm_client.responses.create(model=model, input=prompt)
+    return response.output_text or ""
+
+
 # === Data Loading ===
 def load_and_prepare_data(csv_path: str) -> pd.DataFrame:
     """Load CSV and derive date parts commonly used in charts."""
     df = pd.read_csv(csv_path)
-    # Be tolerant if 'date' exists
     if "date" in df.columns:
         df["date"] = pd.to_datetime(df["date"], errors="coerce")
         df["quarter"] = df["date"].dt.quarter
@@ -58,19 +58,21 @@ def load_and_prepare_data(csv_path: str) -> pd.DataFrame:
         df["year"] = df["date"].dt.year
     return df
 
+
 # === Helpers ===
 def make_schema_text(df: pd.DataFrame) -> str:
     """Return a human-readable schema from a DataFrame."""
     return "\n".join(f"- {c}: {dt}" for c, dt in df.dtypes.items())
 
+
 def ensure_execute_python_tags(text: str) -> str:
     """Normalize code to be wrapped in <execute_python>...</execute_python>."""
     text = text.strip()
-    # Strip ```python fences if present
     text = re.sub(r"^```(?:python)?\s*|\s*```$", "", text).strip()
     if "<execute_python>" not in text:
         text = f"<execute_python>\n{text}\n</execute_python>"
     return text
+
 
 def encode_image_b64(path: str) -> tuple[str, str]:
     """Return (media_type, base64_str) for an image file path."""
@@ -81,18 +83,12 @@ def encode_image_b64(path: str) -> tuple[str, str]:
     return media_type, b64
 
 
-import base64
 from IPython.display import HTML, display
-import pandas as pd
 from typing import Any
 
+
 def print_html(content: Any, title: str | None = None, is_image: bool = False):
-    """
-    Pretty-print inside a styled card.
-    - If is_image=True and content is a string: treat as image path/URL and render <img>.
-    - If content is a pandas DataFrame/Series: render as an HTML table.
-    - Otherwise (strings/others): show as code/text in <pre><code>.
-    """
+    """Jupyter 里美化展示；终端脚本请直接用 print。"""
     try:
         from html import escape as _escape
     except ImportError:
@@ -102,7 +98,6 @@ def print_html(content: Any, title: str | None = None, is_image: bool = False):
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode("utf-8")
 
-    # Render content
     if is_image and isinstance(content, str):
         b64 = image_to_base64(content)
         rendered = f'<img src="data:image/png;base64,{b64}" alt="Image" style="max-width:100%; height:auto; border-radius:8px;">'
@@ -134,8 +129,7 @@ def print_html(content: Any, title: str | None = None, is_image: bool = False):
       font-size:14px;
       color:#111;
     }
-    /* 🔒 Only affects INSIDE the card */
-    .pretty-card pre, 
+    .pretty-card pre,
     .pretty-card code {
       background: #f3f4f6;
       color: #111;
@@ -153,7 +147,7 @@ def print_html(content: Any, title: str | None = None, is_image: bool = False):
       font-size: 13px;
       color: #111;
     }
-    .pretty-card table.pretty-table th, 
+    .pretty-card table.pretty-table th,
     .pretty-card table.pretty-table td {
       border: 1px solid #e5e7eb;
       padding: 6px 8px;
@@ -167,42 +161,26 @@ def print_html(content: Any, title: str | None = None, is_image: bool = False):
     card = f'<div class="pretty-card">{title_html}{rendered}</div>'
     display(HTML(css + card))
 
-    
-
-    
-def image_anthropic_call(model_name: str, prompt: str, media_type: str, b64: str) -> str:
-    """
-    Call Anthropic Claude (messages.create) with text+image and return *all* text blocks concatenated.
-    Adds a system message to enforce strict JSON output.
-    """
-    msg = anthropic_client.messages.create(
-        model=model_name,
-        max_tokens=2000,
-        temperature=0,
-        system=(
-            "You are a careful assistant. Respond with a single valid JSON object only. "
-            "Do not include markdown, code fences, or commentary outside JSON."
-        ),
-        messages=[{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": prompt},
-                {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": b64}},
-            ],
-        }],
-    )
-
-    # Anthropic returns a list of content blocks; collect all text
-    parts = []
-    for block in (msg.content or []):
-        if getattr(block, "type", None) == "text":
-            parts.append(block.text)
-    return "".join(parts).strip()
-
 
 def image_openai_call(model_name: str, prompt: str, media_type: str, b64: str) -> str:
+    """多模态调用：文本 + 图片。"""
     data_url = f"data:{media_type};base64,{b64}"
-    resp = openai_client.responses.create(
+    if _use_chat_completions:
+        resp = llm_client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {"type": "image_url", "image_url": {"url": data_url}},
+                    ],
+                }
+            ],
+        )
+        return (resp.choices[0].message.content or "").strip()
+
+    resp = llm_client.responses.create(
         model=model_name,
         input=[
             {
@@ -214,5 +192,9 @@ def image_openai_call(model_name: str, prompt: str, media_type: str, b64: str) -
             }
         ],
     )
-    content = (resp.output_text or "").strip()
-    return content
+    return (resp.output_text or "").strip()
+
+
+def image_anthropic_call(model_name: str, prompt: str, media_type: str, b64: str) -> str:
+    """Notebook 兼容别名。"""
+    return image_openai_call(model_name, prompt, media_type, b64)
