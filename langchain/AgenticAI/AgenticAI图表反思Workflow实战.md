@@ -279,24 +279,19 @@ def run_workflow(...):
 
 ---
 
-## 七、我踩过的坑
+## 七、可能遇到的坑
 
 **1. OpenAI API 连不上**
 
 表现：`APITimeoutError: Request timed out`  
 解决：换智谱，或配置可用的 API 中转。
 
-**2. Key 写错环境变量名**
-
-智谱 Key 写在 `OPENAI_API_KEY` 下，`utils.py` 读不到 `ZHIPU_API_KEY` 会走错客户端。  
-解决：`.env` 里用 `ZHIPU_API_KEY=...`。
-
-**3. 反思步骤用了非视觉模型**
+**2. 反思步骤用了非视觉模型**
 
 纯文本模型无法「看图」，feedback 质量会很差。  
 解决：Step 3 必须用 `glm-4v-plus` 这类视觉模型。
 
-**4. `exec` 的安全问题**
+**3. `exec` 的安全问题**
 
 `exec` 会运行 LLM 生成的任意 Python。实验环境可以接受；生产环境需要沙箱或白名单 API。
 
